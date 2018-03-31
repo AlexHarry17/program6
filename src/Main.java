@@ -16,22 +16,49 @@ public class Main {
         int infinity = Integer.MAX_VALUE;
         Path file = Paths.get("input/input.csv");   //  path file location to grab input file
         String currentLine;
-        Graph graph = new Graph();
+        Graph graph = new Graph();;
+        boolean doOnce = true;
+        int current_row = 0;
+        int size = 0;
+        
         try (BufferedReader reader = Files.newBufferedReader(file)) {   //creates a new file reader
             while ((currentLine = reader.readLine()) != null) {
-                String[] splitLine = currentLine.split(",");  //    splits input file by comma
-
-
-                for (int i = 0; i < splitLine.length; i++) {   //for loop to insert input file into a graph
-
-                    if (!splitLine[i].equals(",")) {    //checks for comma to insert only characters
-                        if (Integer.parseInt(splitLine[i]) == 236) {    // checks for infinity with ascii value 236
+            	// ignore lines to small to be matrixes
+            	if (currentLine.length() > 1) {
+            		
+            		//splits input file by comma, the commas will not be included in the resulting array
+            		String[] splitLine = currentLine.split(",");
+            		
+            		// Initialize this graph
+            		if (doOnce) {
+            			size = splitLine.length;
+            			graph = new Graph();
+            			graph.set_graph_size(size);
+            			doOnce = false;
+            		}
+            		// increment current row
+            		else {
+            			current_row++;
+            		}
+            		
+                    for (int i = 0; i < splitLine.length; i++) {   //for loop to insert input file into a graph
+                        if (splitLine[i].equals("\u221E")) {    // checks for infinity by matching its unicode value
                             graph.insert(infinity); //inserts infinity value
                         } else {
                             graph.insert(Integer.parseInt(splitLine[i]));   //inserts non infinity value
                         }
                     }
-                }
+                    
+                    // check if graph is full
+                    if (current_row == size - 1) {
+                    	// reset variables
+                    	doOnce = true;
+                    	current_row = 0;
+                    	// print the graph
+                    	graph.print_graph();
+                    	System.out.println();
+                    }
+            	}
             }
         } catch (IOException e) {
             e.printStackTrace();

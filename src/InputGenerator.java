@@ -30,16 +30,22 @@ public class InputGenerator {
 			int matrix_size = random.nextInt((max_size - min_size) + 1) + min_size;
 			
 			String[][] matrix = new String[matrix_size][matrix_size];
-			matrix = non_symmetric(matrix, random);
-			print(matrix, st_writer);
-			print(matrix, writer);
 			
-			st_writer.write("\n");
-			writer.write("\n");
-			
-			matrix = symmetric(matrix, random);
-			print(matrix, st_writer);
-			print(matrix, writer);
+			for (int i=0; i<1; i++) {
+				matrix = non_symmetric(matrix, random);
+				print(matrix, st_writer);
+				print(matrix, writer);
+				
+				st_writer.write("\n");
+				writer.write("\n");
+				
+				matrix = symmetric(matrix, random);
+				print(matrix, st_writer);
+				print(matrix, writer);
+				
+				st_writer.write("\n");
+				writer.write("\n");
+			}
 			
 			st_writer.close();
 			writer.close();
