@@ -14,7 +14,7 @@ public class Main {
 
     public static void main(String[] args) {
         int infinity = Integer.MAX_VALUE;
-        Path file = Paths.get("input/input.txt");   //  path file location to grab input file
+        Path file = Paths.get("input/input.csv");   //  path file location to grab input file
         String currentLine;
         Graph graph = new Graph();
         try (BufferedReader reader = Files.newBufferedReader(file)) {   //creates a new file reader
