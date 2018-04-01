@@ -131,6 +131,12 @@ public class InputGenerator {
 	 * @throws IOException
 	 */
 	private static void print(String[][] matrix, BufferedWriter writer) throws IOException {
+		// print leading a,b,c,...
+		for (int i=0; i<matrix.length - 1; i++) {
+			writer.write((char)(65 + i) + ",");
+		}
+		writer.write((char)(64 + matrix.length) + "\n");
+		
 		for (String[] s : matrix) {
 			for (int i=0; i<s.length - 1; i++) {
 				writer.write(s[i]+ ",");

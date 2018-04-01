@@ -34,23 +34,26 @@ public class Main {
             			size = splitLine.length;
             			graph = new Graph();
             			graph.set_graph_size(size);
+            			graph.set_vertexes(splitLine);
             			doOnce = false;
             		}
             		// increment current row
             		else {
             			current_row++;
+            			// by placing this block here the A,B,C,.. line will be skipped
+            			for (int i = 0; i < splitLine.length; i++) {   //for loop to insert input file into a graph
+                            if (splitLine[i].equals("\u221E")) {    // checks for infinity by matching its unicode value
+                                graph.insert(infinity); //inserts infinity value
+                            } else {
+                                graph.insert(Integer.parseInt(splitLine[i]));   //inserts non infinity value
+                            }
+                        }
             		}
             		
-                    for (int i = 0; i < splitLine.length; i++) {   //for loop to insert input file into a graph
-                        if (splitLine[i].equals("\u221E")) {    // checks for infinity by matching its unicode value
-                            graph.insert(infinity); //inserts infinity value
-                        } else {
-                            graph.insert(Integer.parseInt(splitLine[i]));   //inserts non infinity value
-                        }
-                    }
+                    
                     
                     // check if graph is full
-                    if (current_row == size - 1) {
+                    if (current_row == size) {
                     	// reset variables
                     	doOnce = true;
                     	current_row = 0;
