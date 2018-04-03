@@ -2,8 +2,10 @@ import java.util.ArrayList;
 
 /*
 Authors: Alex Harry, Cory Johns, Justin Keeling
-Date: March 31, 2018
-Overview: Program reads in a graph containing an adjacency matrix
+Date: April 2, 2018
+Overview: Graph stores a two-dimensional array representation of the graph in the input file and
+contains all the functions for running Prim’s, Kruuskal’s, and Floyd-Warshall's Algorithms as well as 
+printing the graph.
 */
 public class Graph {
 	private int graph_size = 0;
@@ -61,34 +63,23 @@ public class Graph {
     	}
     }
     
+    public void prim() {
+    	// copy graph for use here
+    	ArrayList<ArrayList<Integer>> d = duplicate_matrix(graph);
+    }
+    
+    public void kruuskal() {
+    	// copy graph for use here
+    	ArrayList<ArrayList<Integer>> d = duplicate_matrix(graph);
+    }
+    
     /**
      * Runs Floyd-Warshall's algorithm on the instance variable graph
      * does not modify graph but makes a copy and then prints each step of the algorithm
      */
     public void floyd_warshall(){
-    	/*
-    	 * Input given in program assignment
-    	 * 	a,b,c,d,e
-		 *	0,50,∞,80,∞
-		 *	∞,0,60,90,∞
-		 *	∞,∞,0,∞,40
-		 *	∞,∞,20,0,70
-		 *	∞,50,∞,∞,0
-    	 */
-    	// Initialize the min weight graph
-    	ArrayList<ArrayList<Integer>> d = new ArrayList<ArrayList<Integer>>();
-    	// Initialize the graph
-    	for (int i=0; i<graph_size; i++) {
-			d.add(new ArrayList<Integer>());
-		}
-    	
-    	// add initial values
-    	for (int i=0; i<graph.size(); i++) {
-    		for (int j=0; j<graph.get(i).size(); j++) {
-    			// graph is already initialized
-    			d.get(i).add(graph.get(i).get(j).intValue());
-    		}
-    	}
+    	// copy graph for use here
+    	ArrayList<ArrayList<Integer>> d = duplicate_matrix(graph);
     	
     	// find the shortest path
     	for (int k=0; k<graph_size; k++) {
@@ -107,6 +98,30 @@ public class Graph {
     			}
     		}
     	}
+    }
+    
+    /**
+     * Makes a copy of the given matrix that is independent of the original
+     * @param matrix ,the input matrix
+     * @return a new matrix with the same content as the input
+     */
+    private ArrayList<ArrayList<Integer>> duplicate_matrix(ArrayList<ArrayList<Integer>> matrix){
+    	// Initialize the min weight graph
+    	ArrayList<ArrayList<Integer>> d = new ArrayList<ArrayList<Integer>>();
+    	
+    	// Initialize the graph
+    	for (int i=0; i<matrix.size(); i++) {
+			d.add(new ArrayList<Integer>());
+		}
+    	
+    	// add initial values
+    	for (int i=0; i<matrix.size(); i++) {
+    		for (int j=0; j<matrix.get(i).size(); j++) {
+    			// graph is already initialized
+    			d.get(i).add(matrix.get(i).get(j).intValue());
+    		}
+    	}
+    	return d;
     }
     
     /**

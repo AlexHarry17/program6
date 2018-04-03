@@ -6,8 +6,13 @@ import java.nio.file.Paths;
 
 /*
 Authors: Alex Harry, Cory Johns, Justin Keeling
-Date: March 24, 2018
-Overview: Program reads in the graphs containing the adjacency matrixes
+Date: April 2, 2018
+Overview: Program reads in the graph containing the adjacency matrix from the input file at ./input/input.csv
+and repeats the following until there are no more graphs remaining in the input:
+	- prints the graph
+	- runs Prim’s Algorithm and prints the edges in the minimum spanning tree
+	- runs Kruuskal’s Algorithm and prints the edges in the minimum spanning tree
+	- runs Floyd-Warshall's Algorithm and prints every step in finding all the shortest paths
 */
 public class Main {
 	public static int infinity = Integer.MAX_VALUE;
@@ -55,13 +60,20 @@ public class Main {
                     	// reset variables
                     	doOnce = true;
                     	current_row = 0;
+                    	// print the graph for reference
+                    	System.out.println("New Graph...");
+                    	graph.print_graph();
+                    	
                     	// run the Prim’s algorithm part
+                    	System.out.println("Started Prim’s Algorithm...");
+                    	graph.prim();
                     	
                     	// run the Kruuskal’s algorithm part
+                    	System.out.println("Started Kruuskal’s Algorithm...");
+                    	graph.kruuskal();
                     	
                     	// run the Floyd-Warshall's algorithm part
-                    	System.out.println("Started a new graph...");
-                    	graph.print_graph();
+                    	System.out.println("Started Floyd-Warshall's Algorithm...");
                     	graph.floyd_warshall();
                     }
             	}
