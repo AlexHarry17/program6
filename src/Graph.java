@@ -81,6 +81,11 @@ public class Graph {
     	// copy graph for use here
     	ArrayList<ArrayList<Integer>> d = duplicate_matrix(graph);
     	
+    	// set diagonal to 0
+    	for (int i=0; i<graph_size; i++) {
+    		d.get(i).set(i, 0);
+    	}
+    	
     	// find the shortest path
     	for (int k=0; k<graph_size; k++) {
     		for (int i=0; i<graph_size; i++) {
