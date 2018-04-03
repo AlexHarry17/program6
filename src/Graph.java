@@ -62,41 +62,110 @@ public class Graph {
     }
     
     /**
-     * Prints the current graph
+     * Runs Floyd-Warshall's algorithm on the instance variable graph
+     * does not modify graph but makes a copy and then prints each step of the algorithm
      */
-    public void print_graph() {
-    	// print a spacer
-    	System.out.print("  ");
-    	// print vertex names along the top of the matrix
-    	for (int i=0; i<vertexes.size() - 1; i++) {
-    		System.out.print(vertexes.get(i)+ ",");
-    	}
-    	// print last vertex name with a newline instead of a ","
-    	System.out.print(vertexes.get(vertexes.size() - 1)+ "\n");
+    public void floyd_warshall(){
+    	/*
+    	 * Input given in program assignment
+    	 * 	a,b,c,d,e
+		 *	0,50,∞,80,∞
+		 *	∞,0,60,90,∞
+		 *	∞,∞,0,∞,40
+		 *	∞,∞,20,0,70
+		 *	∞,50,∞,∞,0
+    	 */
+    	// Initialize the min weight graph
+    	ArrayList<ArrayList<Integer>> d = new ArrayList<ArrayList<Integer>>();
+    	// Initialize the graph
+    	for (int i=0; i<graph_size; i++) {
+			d.add(new ArrayList<Integer>());
+		}
     	
-    	// print each row of the matrix
+    	// add initial values
     	for (int i=0; i<graph.size(); i++) {
-    		// print vertex name
-    		System.out.print(vertexes.get(i) + " ");
-    		
-    		// print the values
-    		for (int j=0; j<graph.get(i).size() - 1; j++) {
-    			System.out.print(get_print_value(i, j) + ",");
+    		for (int j=0; j<graph.get(i).size(); j++) {
+    			// graph is already initialized
+    			d.get(i).add(graph.get(i).get(j).intValue());
     		}
-    		// print the last value with a newline instead of a ","
-    		System.out.print(get_print_value(i, graph.get(i).size() - 1) + "\n");
+    	}
+    	
+    	// find the shortest path
+    	for (int k=0; k<graph_size; k++) {
+    		for (int i=0; i<graph_size; i++) {
+    			for (int j=0; j<graph_size; j++) {
+    				// cannot perform arithmetic on infinity
+    				if (!is_max_value(d.get(i).get(k).intValue()) && !is_max_value(d.get(k).get(j).intValue())) {
+    					// test if path is shorter then current one
+    					if (d.get(i).get(j).intValue() > d.get(i).get(k).intValue() + d.get(k).get(j).intValue()) {
+    						// path is shorter, replace current
+        					d.get(i).set(j, d.get(i).get(k).intValue() + d.get(k).get(j).intValue());
+        					// print this step
+        					print_graph(d, vertexes);
+        				}
+    				}
+    			}
+    		}
     	}
     }
     
     /**
+     * Tests if the input is the designated infinity for the adjacency matrix as determined by Main.java
+     * @param test
+     * @return true if test is equal to the infinity value of Main
+     */
+    private boolean is_max_value(int test) {
+    	return test == Main.infinity;
+    }
+    
+    /**
+     * Prints the current version of the instance variable graph
+     */
+    public void print_graph() {
+    	print_graph(graph, vertexes);
+    }
+    
+    /**
+     * Prints the given matrix with the given vertex names
+     * @param matrix
+     * @param vertex_names
+     */
+    public void print_graph(ArrayList<ArrayList<Integer>> matrix, ArrayList<String> vertex_names) {
+    	// print a spacer
+    	System.out.print("  ");
+    	// print vertex names along the top of the matrix
+    	for (int i=0; i<vertex_names.size() - 1; i++) {
+    		System.out.print(vertex_names.get(i)+ ",");
+    	}
+    	// print last vertex name with a newline instead of a ","
+    	System.out.print(vertex_names.get(vertex_names.size() - 1)+ "\n");
+    	
+    	// print each row of the matrix
+    	for (int i=0; i<matrix.size(); i++) {
+    		// print vertex name
+    		System.out.print(vertex_names.get(i) + " ");
+    		
+    		// print the values
+    		for (int j=0; j<matrix.get(i).size() - 1; j++) {
+    			System.out.print(get_print_value(matrix, i, j) + ",");
+    		}
+    		// print the last value with a newline instead of a ","
+    		System.out.print(get_print_value(matrix, i, matrix.get(i).size() - 1) + "\n");
+    	}
+    	// print a space at the end of the matrix
+    	System.out.println();
+    }
+    
+    /**
      * Gets the String that represents the value at the given row & col of the matrix
+     * @param matrix the source matrix
      * @param row of the value
      * @param col of the value
      * @return the representative String
      */
-    private String get_print_value(int row, int col) {
-    	int value = graph.get(row).get(col).intValue();
-    	if (value == Integer.MAX_VALUE) {
+    private String get_print_value(ArrayList<ArrayList<Integer>> matrix, int row, int col) {
+    	int value = matrix.get(row).get(col).intValue();
+    	if (is_max_value(value)) {
     		return "\u221E";
     	}
     	else {

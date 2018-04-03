@@ -12,6 +12,7 @@ Authors: Alex Harry, Cory Johns, Justin Keeling
 Date: March 31, 2018
 Overview: Program generates multiple matrixes of random size and contents 
 and can generate both symmetric and non-symmetric matrixes. Outputs results to the console and ./input/input.csv.
+Graphs may not be connected
 */
 public class InputGenerator {
 	// string to represent infinity
@@ -22,6 +23,8 @@ public class InputGenerator {
 	private static int max_size = 10;
 	// min size of a matrix
 	private static int min_size = 3;
+	// number of matrix pairs to print
+	private static int pairs = 1;
 	// define charset
 	private static Charset charset = Charset.forName("UTF-8");
 
@@ -43,7 +46,7 @@ public class InputGenerator {
 			String[][] matrix = new String[matrix_size][matrix_size];
 			
 			// repeat a select number of times
-			for (int i=0; i<1; i++) {
+			for (int i=0; i<pairs; i++) {
 				// initialize a non symmetric matrix
 				matrix = non_symmetric(matrix, random);
 				// print matrix to both outputs

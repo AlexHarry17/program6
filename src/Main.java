@@ -1,26 +1,24 @@
-/*
-Authors: Alex Harry, Cory Johns, Justin Keeling
-Date: March 24, 2018
-Overview: Program reads in a graph containing an adjacency matrix
-*/
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+/*
+Authors: Alex Harry, Cory Johns, Justin Keeling
+Date: March 24, 2018
+Overview: Program reads in the graphs containing the adjacency matrixes
+*/
 public class Main {
+	public static int infinity = Integer.MAX_VALUE;
+	private static Path file = Paths.get("input/input.csv");   //  path file location to grab input file
+    private static String currentLine;
+    private static Graph graph = new Graph();;
+    private static boolean doOnce = true;
+    private static int current_row = 0;
+    private static int size = 0;
 
     public static void main(String[] args) {
-        int infinity = Integer.MAX_VALUE;
-        Path file = Paths.get("input/input.csv");   //  path file location to grab input file
-        String currentLine;
-        Graph graph = new Graph();;
-        boolean doOnce = true;
-        int current_row = 0;
-        int size = 0;
-        
         try (BufferedReader reader = Files.newBufferedReader(file)) {   //creates a new file reader
             while ((currentLine = reader.readLine()) != null) {
             	// ignore lines to small to be matrixes
@@ -40,7 +38,7 @@ public class Main {
             		// increment current row
             		else {
             			current_row++;
-            			// by placing this block here the A,B,C,.. line will be skipped
+            			// by placing this block here the vertex name line will be skipped
             			for (int i = 0; i < splitLine.length; i++) {   //for loop to insert input file into a graph
                             if (splitLine[i].equals("\u221E")) {    // checks for infinity by matching its unicode value
                                 graph.insert(infinity); //inserts infinity value
@@ -53,13 +51,18 @@ public class Main {
                     
                     
                     // check if graph is full
-                    if (current_row == size) {
+                    if (current_row == size) {	// row 0 is actually when current_row = 1, since the vertex name line is 0
                     	// reset variables
                     	doOnce = true;
                     	current_row = 0;
-                    	// print the graph
+                    	// run the Prim’s algorithm part
+                    	
+                    	// run the Kruuskal’s algorithm part
+                    	
+                    	// run the Floyd-Warshall's algorithm part
+                    	System.out.println("Started a new graph...");
                     	graph.print_graph();
-                    	System.out.println();
+                    	graph.floyd_warshall();
                     }
             	}
             }
