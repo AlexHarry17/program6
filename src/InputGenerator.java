@@ -9,9 +9,9 @@ import java.util.Random;
 
 /*
 Authors: Alex Harry, Cory Johns, Justin Keeling
-Date: March 31, 2018
-Overview: Program generates multiple matrixes of random size and contents 
-and can generate both symmetric and non-symmetric matrixes. Outputs results to the console and ./input/input.csv.
+Date: April 4, 2018
+Overview: Program generates a specified number of matrixes of random size and contents 
+and can generate symmetric, non-symmetric, and non-cyclic matrixes. Outputs results to the console and ./input/input.csv.
 Graphs may not be connected
 */
 public class InputGenerator {
@@ -47,18 +47,18 @@ public class InputGenerator {
 			
 			// repeat a select number of times
 			for (int i=0; i<pairs; i++) {
-				// initialize a non symmetric matrix
-				matrix = non_symmetric(matrix, random);
-				// print matrix to both outputs
-				print(matrix, st_writer);
-				print(matrix, writer);
+				// randomly pick a type of matrix
+				int random_selector = random.nextInt(100) % 3;
+				if (random_selector == 0) {
+					matrix = non_symmetric(matrix, random);
+				}
+				else if (random_selector == 1) {
+					matrix = symmetric(matrix, random);
+				}
+				else {
+					matrix = non_cyclic(matrix, random);
+				}
 				
-				// separate with a newline
-				st_writer.write("\n");
-				writer.write("\n");
-				
-				// initialize a symmetric matrix
-				matrix = symmetric(matrix, random);
 				// print matrix to both outputs
 				print(matrix, st_writer);
 				print(matrix, writer);
@@ -109,7 +109,40 @@ public class InputGenerator {
 		for (int i=0; i<matrix.length; i++) {
 			for (int j=0; j<matrix[i].length; j++) {
 				// guarantee symmetry by copying the half above the diagonal to the half below the diagonal
-				if (i - j < 0) {
+				if (i - j <= 0) {
+					// randomly assign either an int or INF to the current location
+					if ((i - j != 0) && (random.nextInt((max_size - min_size) + 1) + min_size) % 3 == 0) {
+						matrix[i][j] = "" + random.nextInt(max + 1);
+					}
+					else {
+						matrix[i][j] = "" + INF;
+					}
+				}
+				else {
+					matrix[i][j] = "" + matrix[j][i];
+				}
+				
+			}
+		}
+		return matrix;
+	}
+	
+	/**
+	 * Makes a noncyclic matrix by only adding edges to higher/lower vertexes but never both
+	 * @param matrix
+	 * @param random
+	 * @return the initialized matrix
+	 */
+	private static String[][] non_cyclic(String[][] matrix, Random random){
+		// pick a random side of the diagonal, random_side will be ether a 0 or a 1
+		int random_side = random.nextInt(100) % 2;
+		
+		// initialize array
+		for (int i=0; i<matrix.length; i++) {
+			for (int j=0; j<matrix[i].length; j++) {
+				// guarantee noncyclic by not including values for one side of the diagonal
+				// if random_side is a 0 the upper side will be picked
+				if ((i - j)*(1 - 2*random_side) < 0) {
 					// randomly assign either an int or INF to the current location
 					if ((random.nextInt((max_size - min_size) + 1) + min_size) % 3 == 0) {
 						matrix[i][j] = "" + random.nextInt(max + 1);
@@ -119,7 +152,7 @@ public class InputGenerator {
 					}
 				}
 				else {
-					matrix[i][j] = "" + matrix[j][i];
+					matrix[i][j] = "" + INF;
 				}
 				
 			}
