@@ -69,7 +69,7 @@ public class Main {
                     	graph.prim();
                     	
                     	// run the Kruuskal’s algorithm part
-                    	System.out.println("Started Kruuskal’s Algorithm...");
+                    	System.out.println("Started Kruskal’s Algorithm...");
                     	graph.kruuskal();
                     	
                     	// run the Floyd-Warshall's algorithm part
