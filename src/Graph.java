@@ -146,7 +146,7 @@ public class Graph {
             if (q.isEmpty()) {  // checks if the queue is empty, for print forman
                 t.add((temp.getVert1() + temp.getVert2())); // adds to t array list
             } else {
-                t.add((temp.getVert1() + temp.getVert2() + " -> "));    // adds to t array list
+                t.add((temp.getVert1() + temp.getVert2()));    // adds to t array list
             }
         } while (!q.isEmpty());
         System.out.println(t);  // prints array list
