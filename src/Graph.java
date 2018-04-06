@@ -69,7 +69,7 @@ public class Graph {
         }
     }
 
-    private void prim() {
+    public void prim() {
         // copy graph for use here
         ArrayList<ArrayList<Integer>> matrix_D = duplicate_matrix(graph);
 
@@ -128,24 +128,30 @@ public class Graph {
 
     public void kruuskal() {
 
-        ArrayList<ArrayList<Integer>> t = null; //instantiates array t to return
+        ArrayList<String> t = new ArrayList<String>(); //instantiates array t to return
         ArrayList<ArrayList<Integer>> d = duplicate_matrix(graph);  // copy of graph
-        PriorityQueue<Integer> q = new PriorityQueue<Integer>();    //creates a priority queue for kruskal algo
-        Integer c = d.get(0).get(0);  //sets elementary cluster
-        for (int k = 0; k < graph_size; k++) {
-            for (int i = 0; i < graph_size; i++) {
-                for (int j = 0; j < graph_size; j++) {
-                    q.add(d.get(i).get(j)); // initialize priority queue
-                }
-            }
-            while (t.size() < graph_size - 1 || t.isEmpty()) {
-                for (int i = 0; i < graph_size; i++) {
-                    for (int j = 0; j < graph_size; j++) {
-                        //set (u,v)                    }
+        PriorityQueue<QueueEdge> q = new PriorityQueue<QueueEdge>();    //creates a priority queue for kruskal algo
+        for (int i = 0; i < graph_size; i++) {
+            for (int j = 0; j < graph_size; j++) {
+                if (d.get(i).get(j) != Main.infinity) { // checks if vertex is infinity
+                    if (j != i) {   //checks that j != b, ex. A = A
+                        q.add(new QueueEdge(d.get(i).get(j), vertexes.get(i), vertexes.get(j))); // Adds to the queue
                     }
                 }
             }
         }
+
+        do {    //loops while q is not empty
+            QueueEdge temp = q.poll();  // temp variable that pulls from the queue
+            if (q.isEmpty()) {  // checks if the queue is empty, for print forman
+                t.add((temp.getVert1() + temp.getVert2())); // adds to t array list
+            } else {
+                t.add((temp.getVert1() + temp.getVert2() + " -> "));    // adds to t array list
+            }
+        } while (!q.isEmpty());
+        System.out.println(t);  // prints array list
+
+
     }
 
 

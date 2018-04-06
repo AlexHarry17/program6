@@ -66,7 +66,7 @@ public class Main {
                     	
                     	// run the Prim’s algorithm part
                     	System.out.println("Started Prim’s Algorithm...");
-                    	graph.prim();
+                    	//graph.prim();
                     	
                     	// run the Kruuskal’s algorithm part
                     	System.out.println("Started Kruskal’s Algorithm...");
