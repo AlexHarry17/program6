@@ -6,7 +6,7 @@ import java.nio.file.Paths;
 
 /*
 Authors: Alex Harry, Cory Johns, Justin Keeling
-Date: April 2, 2018
+Date: April 7, 2018
 Overview: Program reads in the graph containing the adjacency matrix from the input file at ./input/input.csv
 and repeats the following until there are no more graphs remaining in the input:
 	- prints the graph
@@ -66,7 +66,7 @@ public class Main {
                     	
                     	// run the Prim’s algorithm part
                     	System.out.println("Started Prim’s Algorithm...");
-                    	//graph.prim();
+                    	graph.prim();
                     	
                     	// run the kruskal’s algorithm part
                     	System.out.println("Started Kruskal’s Algorithm...");
