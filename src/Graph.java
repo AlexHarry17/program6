@@ -132,7 +132,8 @@ public class Graph {
         ArrayList<ArrayList<Integer>> d = duplicate_matrix(graph);  // copy of graph
         PriorityQueue<QueueEdge> q = new PriorityQueue<QueueEdge>();    //creates a priority queue for kruskal algo
         for (int i = 0; i < graph_size; i++) {
-            for (int j = 0; j < graph_size; j++) {
+        	// loop though only the upper diagonal, by starting j at i
+            for (int j = i; j < graph_size; j++) {
                 if (!is_max_value(d.get(i).get(j))) { // checks if vertex is not infinity
                     if (i != j) {   //checks that j != b, ex. A = A
                         q.add(new QueueEdge(d.get(i).get(j), vertexes.get(i), vertexes.get(j))); // Adds to the queue

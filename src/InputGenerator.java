@@ -139,12 +139,11 @@ public class InputGenerator {
 		// symmetric matrixes are naturally connected if all vertexes have at least one connection
 		String[][] base = symmetric(matrix, random);
 		
-		
 		// check for unconnected vertexes
 		for (int i=0; i<base.length; i++) {
 			boolean goodrow = false;
 			for (int j=0; j<base[i].length; j++) {
-				if (base[i][j] != INF) {
+				if (!base[i][j].equals(INF)) {
 					goodrow = true;
 					break;
 				}
