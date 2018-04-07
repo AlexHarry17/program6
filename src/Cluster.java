@@ -1,8 +1,16 @@
 import java.util.ArrayList;
 
+/*
+Authors: Alex Harry, Cory Johns, Justin Keeling
+Date: April 6, 2018
+Overview: Cluster contains a list of all current vertex clusters in the graph as used by Kruskal’s Algorithm.
+The cluster list may be initialized by declaring a new Cluster and giving it a String array of all the vertex names in
+the graph. This will make a list of clusters each containing one vertex. Then simply use the isSameCluster and mergeClusters
+methods as needed by the algorithm.
+*/
 public class Cluster {
 	// the list of clusters currently in the graph, vertexes should only appear once in the cluster list
-	ArrayList<ArrayList<String>> clusterList;
+	private ArrayList<ArrayList<String>> clusterList;
 	
 	/**
 	 * Initializes a cluster list with each of the given vertexes in there own cluster
