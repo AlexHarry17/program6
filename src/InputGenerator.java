@@ -11,9 +11,8 @@ import java.util.Random;
 Authors: Alex Harry, Cory Johns, Justin Keeling
 Date: April 4, 2018
 Overview: Program generates a specified number of matrixes of random size and contents 
-and can generate symmetric, non-symmetric, and connected matrixes. Outputs results to the console and ./input/input.csv.
-Graphs may not be connected if from symmetric or non-symmetric.
-connected matrixes are also symmetric
+and can generate symmetric, non-symmetric, and non-cyclic matrixes. Outputs results to the console and ./input/input.csv.
+Graphs may not be connected
 */
 public class InputGenerator {
 	// string to represent infinity
@@ -49,7 +48,7 @@ public class InputGenerator {
 			// repeat a select number of times
 			for (int i=0; i<pairs; i++) {
 				// randomly pick a type of matrix
-				int random_selector = 3;//random.nextInt(100) % 3;
+				int random_selector = random.nextInt(100) % 3;
 				if (random_selector == 0) {
 					matrix = non_symmetric(matrix, random);
 				}
@@ -57,7 +56,7 @@ public class InputGenerator {
 					matrix = symmetric(matrix, random);
 				}
 				else {
-					matrix = connected(matrix, random);
+					matrix = non_cyclic(matrix, random);
 				}
 				
 				// print matrix to both outputs
@@ -129,34 +128,36 @@ public class InputGenerator {
 	}
 	
 	/**
-	 * Makes a connected matrix by making a symmetric matrix and then making sure there are no vertexes with 
-	 * no edges
+	 * Makes a noncyclic matrix by only adding edges to higher/lower vertexes but never both
 	 * @param matrix
 	 * @param random
 	 * @return the initialized matrix
 	 */
-	private static String[][] connected(String[][] matrix, Random random){
-		// symmetric matrixes are naturally connected if all vertexes have at least one connection
-		String[][] base = symmetric(matrix, random);
+	private static String[][] non_cyclic(String[][] matrix, Random random){
+		// pick a random side of the diagonal, random_side will be ether a 0 or a 1
+		int random_side = random.nextInt(100) % 2;
 		
-		// check for unconnected vertexes
-		for (int i=0; i<base.length; i++) {
-			boolean goodrow = false;
-			for (int j=0; j<base[i].length; j++) {
-				if (!base[i][j].equals(INF)) {
-					goodrow = true;
-					break;
+		// initialize array
+		for (int i=0; i<matrix.length; i++) {
+			for (int j=0; j<matrix[i].length; j++) {
+				// guarantee noncyclic by not including values for one side of the diagonal
+				// if random_side is a 0 the upper side will be picked
+				if ((i - j)*(1 - 2*random_side) < 0) {
+					// randomly assign either an int or INF to the current location
+					if ((random.nextInt((max_size - min_size) + 1) + min_size) % 3 == 0) {
+						matrix[i][j] = "" + random.nextInt(max + 1);
+					}
+					else {
+						matrix[i][j] = "" + INF;
+					}
 				}
-			}
-			if (!goodrow) {
-				// select a random location
-				int tmp = random.nextInt(base[i].length);
-				// give a random edge weight and ensure symmetry
-				base[i][tmp] = "" + random.nextInt(max + 1);
-				base[tmp][i] = base[i][tmp];
+				else {
+					matrix[i][j] = "" + INF;
+				}
+				
 			}
 		}
-		return base;
+		return matrix;
 	}
 	
 	/**
