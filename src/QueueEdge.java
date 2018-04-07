@@ -1,9 +1,8 @@
 /*
 Authors: Alex Harry, Cory Johns, Justin Keeling
 Date: April 2, 2018
-Overview: Graph stores a two-dimensional array representation of the graph in the input file and
-contains all the functions for running Prim’s, kruskal’s, and Floyd-Warshall's Algorithms as well as
-printing the graph.
+Overview: QueueEdge contains the weight and both vertexes that compose this edge as well as all
+needed functions for interacting with it such as a comparable definition
 */
 public class QueueEdge implements Comparable<QueueEdge>{
     private int edge;

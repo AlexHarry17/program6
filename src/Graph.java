@@ -84,7 +84,7 @@ public class Graph {
 
         for (int i = 0; i < graph_size; i++) {
             //creates a new vertex with its 'edge' currently set to null and infinity, and the vertex's status is false.
-            Vertex vertex = new Vertex(new Edge(null, Integer.MAX_VALUE), false, i);
+            Vertex vertex = new Vertex(new MST_LinkedList(null, Main.infinity), false, i);
 
             //chooses 'start' equal to the'vertex' when 'i' = 'rand_start'
             if (random_start == i) {
@@ -99,9 +99,9 @@ public class Graph {
         }
         // instance variable to put into a queue of edges
         Vertex compare = null;
-        PriorityQueue<Edge> edges = new PriorityQueue<Edge>(graph_size, new Edge_Comparator());
+        PriorityQueue<MST_LinkedList> edges = new PriorityQueue<MST_LinkedList>(graph_size, new MST_LL_Comparator());
 
-        int min = Integer.MAX_VALUE;
+        int min = Main.infinity;
 
         //checks the current vertexes edges from graph to put into queue
         for (int v = 0; v < graph_size; v++) {
@@ -133,7 +133,7 @@ public class Graph {
         PriorityQueue<QueueEdge> q = new PriorityQueue<QueueEdge>();    //creates a priority queue for kruskal algo
         for (int i = 0; i < graph_size; i++) {
             for (int j = 0; j < graph_size; j++) {
-                if (d.get(i).get(j) != Main.infinity) { // checks if vertex is infinity
+                if (!is_max_value(d.get(i).get(j))) { // checks if vertex is not infinity
                     if (i != j) {   //checks that j != b, ex. A = A
                         q.add(new QueueEdge(d.get(i).get(j), vertexes.get(i), vertexes.get(j))); // Adds to the queue
                     }
@@ -143,16 +143,10 @@ public class Graph {
         do {    //loops while q is not empty
             QueueEdge temp = q.poll();  // temp variable that pulls from the queue
             if (!temp.getVert1().equals(temp.getVert2())) {
-                if (q.isEmpty()) {  // checks if the queue is empty, for print format
-                    t.add((temp.getVert1() + temp.getVert2())); // adds to t array list
-                } else {
-                    t.add((temp.getVert1() + temp.getVert2()));    // adds to t array list
-                }
+                t.add((temp.getVert1() + temp.getVert2()));    // adds to t array list
             }
         } while (!q.isEmpty());
         System.out.println(t);  // prints array list
-
-
     }
 
 
@@ -276,11 +270,11 @@ public class Graph {
 
     public static class Vertex {
 
-        Edge edge;
+        MST_LinkedList edge;
         boolean status;
         int index;
 
-        public Vertex(Edge in_edge, boolean in_status, int in_index) {
+        public Vertex(MST_LinkedList in_edge, boolean in_status, int in_index) {
             // variable to hold status if it has been visited or not
             status = in_status;
             // edge to get weight of a vertex.
@@ -290,22 +284,22 @@ public class Graph {
         }
     }
 
-    public static class Edge {
+    public static class MST_LinkedList {
         //essentially parent
         Vertex pd;
 
         int weight;
 
-        public Edge(Vertex in_pd, int in_length) {
+        public MST_LinkedList(Vertex in_pd, int in_length) {
             pd = in_pd;
             weight = in_length;
         }
     }
 
-    public static class Edge_Comparator implements Comparator<Edge> {
+    public static class MST_LL_Comparator implements Comparator<MST_LinkedList> {
         // used to compare weights of edges.
         @Override
-        public int compare(Edge e1, Edge e2) {
+        public int compare(MST_LinkedList e1, MST_LinkedList e2) {
             if (e1.weight < e2.weight) {
                 return 1;
             } else if (e1.weight > e2.weight) {
