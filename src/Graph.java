@@ -7,7 +7,7 @@ import java.util.PriorityQueue;
 Authors: Alex Harry, Cory Johns, Justin Keeling
 Date: April 2, 2018
 Overview: Graph stores a two-dimensional array representation of the graph in the input file and
-contains all the functions for running Prim’s, Kruuskal’s, and Floyd-Warshall's Algorithms as well as
+contains all the functions for running Prim’s, kruskal’s, and Floyd-Warshall's Algorithms as well as
 printing the graph.
 */
 public class Graph {
@@ -126,7 +126,7 @@ public class Graph {
 
     }
 
-    public void kruuskal() {
+    public void kruskal() {
 
         ArrayList<String> t = new ArrayList<String>(); //instantiates array t to return
         ArrayList<ArrayList<Integer>> d = duplicate_matrix(graph);  // copy of graph
@@ -134,19 +134,20 @@ public class Graph {
         for (int i = 0; i < graph_size; i++) {
             for (int j = 0; j < graph_size; j++) {
                 if (d.get(i).get(j) != Main.infinity) { // checks if vertex is infinity
-                    if (j != i) {   //checks that j != b, ex. A = A
+                    if (i != j) {   //checks that j != b, ex. A = A
                         q.add(new QueueEdge(d.get(i).get(j), vertexes.get(i), vertexes.get(j))); // Adds to the queue
                     }
                 }
             }
         }
-
         do {    //loops while q is not empty
             QueueEdge temp = q.poll();  // temp variable that pulls from the queue
-            if (q.isEmpty()) {  // checks if the queue is empty, for print forman
-                t.add((temp.getVert1() + temp.getVert2())); // adds to t array list
-            } else {
-                t.add((temp.getVert1() + temp.getVert2()));    // adds to t array list
+            if (!temp.getVert1().equals(temp.getVert2())) {
+                if (q.isEmpty()) {  // checks if the queue is empty, for print format
+                    t.add((temp.getVert1() + temp.getVert2())); // adds to t array list
+                } else {
+                    t.add((temp.getVert1() + temp.getVert2()));    // adds to t array list
+                }
             }
         } while (!q.isEmpty());
         System.out.println(t);  // prints array list
