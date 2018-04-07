@@ -16,13 +16,13 @@ public class Cluster {
 	 * Initializes a cluster list with each of the given vertexes in there own cluster
 	 * @param vertexes list of vertexes in the graph
 	 */
-	public Cluster(String[] vertexes) {
+	public Cluster(ArrayList<Vertex> vertexes) {
 		clusterList = new ArrayList<ArrayList<String>>();
-		for (int i=0; i<vertexes.length; i++) {
+		for (int i=0; i<vertexes.size(); i++) {
 			// add a new cluster
 			clusterList.add(new ArrayList<String>());
 			// add the vertex to the cluster
-			clusterList.get(i).add(vertexes[i]);
+			clusterList.get(i).add(vertexes.get(i).name);
 		}
 	}
 	
