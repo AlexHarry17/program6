@@ -6,23 +6,23 @@ needed functions for interacting with it such as a comparable definition
 */
 public class QueueEdge implements Comparable<QueueEdge>{
     private int edge;
-    private String vert1;
-    private String vert2;
+    private Vertex vert1;
+    private Vertex vert2;
 
 
     public int getEdge() {
         return edge;
     }   //getter for edge value
 
-    public String getVert1() {
+    public Vertex getVert1() {
         return vert1;
     }   //getter for vertex 1
 
-    public String getVert2() {
+    public Vertex getVert2() {
         return vert2;
     }   //getter for vertex 2
 
-    public QueueEdge(int inEdge, String inVert1, String inVert2) {
+    public QueueEdge(int inEdge, Vertex inVert1, Vertex inVert2) {
         edge = inEdge;
         vert1 = inVert1;
         vert2 = inVert2;

@@ -13,7 +13,7 @@ printing the graph.
 public class Graph {
     private int graph_size = 0;
     private ArrayList<ArrayList<Integer>> graph = new ArrayList<ArrayList<Integer>>();
-    private ArrayList<String> vertexes;
+    private ArrayList<Vertex> vertexes;
 
     public Graph() {
 
@@ -39,10 +39,10 @@ public class Graph {
      */
     public void set_vertexes(String[] names) {
         // Initialize the name list
-        vertexes = new ArrayList<String>();
+        vertexes = new ArrayList<Vertex>();
         // append each name
         for (String name : names) {
-            vertexes.add(name);
+            vertexes.add(new Vertex(name));
         }
     }
 
@@ -69,7 +69,40 @@ public class Graph {
         }
     }
 
+    
     public void prim() {
+    	/* definitions : 
+    	 * - MST is a list of edges
+    	 * - Edge is a class containing the weight, vertex 1, vertex 2 for the edge, the print value is vertex1.name + vertex2.name
+    	 * - vertex is a class containing the vertex name, visited flag
+    	 * Need:
+    	 * - a list of all vertex objects (already implemented as the global vertexes field)
+    	 * - MST (empty at start)
+    	 * - a list of all edges in the graph but don’t include duplicates (QueueEdge.equals will work here)
+    	 * 	- start the list of edges with references to the list of vertexes (use QueueEdge it is already set up for the priority queue)
+    	 */
+    	// set up the list of edges without duplicates
+
+    	// pick a start vertex
+
+    	// set vertex as visited
+
+    	// while MST has less then the number of vertexes - 1 edges in it
+
+    		// for all vertexes in the MST (i.e. all vertexes with visited == true)
+    			
+    			// make the cut i.e.:
+    			// add all edges containing the visited vertexes in position 1 to a priority queue if visited is false for vertex 2
+
+    		// pick the best one
+
+    		// set vertex 2 as visited
+
+    		// add the corresponding edge to to the MST (i.e. vertex1 -> vertex2)
+    	
+    	
+    	
+    	/*
         // copy graph for use here
         ArrayList<ArrayList<Integer>> matrix_D = duplicate_matrix(graph);
 
@@ -121,9 +154,7 @@ public class Graph {
 
             }
         }
-        current.edge = edges.poll();
-
-
+        current.edge = edges.poll();*/
     }
 
     public void kruskal() {
@@ -144,7 +175,7 @@ public class Graph {
         do {    //loops while q is not empty
             QueueEdge temp = q.poll();  // temp variable that pulls from the queue
             if (!temp.getVert1().equals(temp.getVert2())) {
-                t.add((temp.getVert1() + temp.getVert2()));    // adds to t array list
+                t.add((temp.getVert1().name + temp.getVert2().name));    // adds to t array list
             }
         } while (!q.isEmpty());
         System.out.println(t);  // prints array list
@@ -158,6 +189,11 @@ public class Graph {
     public void floyd_warshall() {
         // copy graph for use here
         ArrayList<ArrayList<Integer>> d = duplicate_matrix(graph);
+        
+        // set diagonal to 0
+        for (int i=0; i < graph_size; i++) {
+        	d.get(i).set(i, 0);
+        }
 
         // find the shortest path
         for (int k = 0; k < graph_size; k++) {
@@ -226,7 +262,7 @@ public class Graph {
      * @param matrix
      * @param vertex_names
      */
-    public void print_graph(ArrayList<ArrayList<Integer>> matrix, ArrayList<String> vertex_names) {
+    public void print_graph(ArrayList<ArrayList<Integer>> matrix, ArrayList<Vertex> vertex_names) {
         // print a spacer
         System.out.print("  ");
         // print vertex names along the top of the matrix
@@ -269,45 +305,45 @@ public class Graph {
         }
     }
 
-    public static class Vertex {
-
-        MST_LinkedList edge;
-        boolean status;
-        int index;
-
-        public Vertex(MST_LinkedList in_edge, boolean in_status, int in_index) {
-            // variable to hold status if it has been visited or not
-            status = in_status;
-            // edge to get weight of a vertex.
-            edge = in_edge;
-            // index from array
-            index = in_index;
-        }
-    }
-
-    public static class MST_LinkedList {
-        //essentially parent
-        Vertex pd;
-
-        int weight;
-
-        public MST_LinkedList(Vertex in_pd, int in_length) {
-            pd = in_pd;
-            weight = in_length;
-        }
-    }
-
-    public static class MST_LL_Comparator implements Comparator<MST_LinkedList> {
-        // used to compare weights of edges.
-        @Override
-        public int compare(MST_LinkedList e1, MST_LinkedList e2) {
-            if (e1.weight < e2.weight) {
-                return 1;
-            } else if (e1.weight > e2.weight) {
-                return -1;
-            }
-            return 0;
-        }
-    }
+//    public static class Vertex {
+//
+//        MST_LinkedList edge;
+//        boolean status;
+//        int index;
+//
+//        public Vertex(MST_LinkedList in_edge, boolean in_status, int in_index) {
+//            // variable to hold status if it has been visited or not
+//            status = in_status;
+//            // edge to get weight of a vertex.
+//            edge = in_edge;
+//            // index from array
+//            index = in_index;
+//        }
+//    }
+//
+//    public static class MST_LinkedList {
+//        //essentially parent
+//        Vertex pd;
+//
+//        int weight;
+//
+//        public MST_LinkedList(Vertex in_pd, int in_length) {
+//            pd = in_pd;
+//            weight = in_length;
+//        }
+//    }
+//
+//    public static class MST_LL_Comparator implements Comparator<MST_LinkedList> {
+//        // used to compare weights of edges.
+//        @Override
+//        public int compare(MST_LinkedList e1, MST_LinkedList e2) {
+//            if (e1.weight < e2.weight) {
+//                return 1;
+//            } else if (e1.weight > e2.weight) {
+//                return -1;
+//            }
+//            return 0;
+//        }
+//    }
 }
 
