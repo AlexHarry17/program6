@@ -9,12 +9,25 @@ public class Vertex {
 	public String name;
 	// if this vertex has been included in the MST
 	private boolean visited;
+	private int index;
 	
 	public Vertex(String name) {
 		this.name = name;
 		visited = false;
 	}
-	
+
+	/**
+	 * Sets index reference from graph
+	 * @param in_index
+	 */
+	public void set_index(int in_index){index = in_index;}
+
+	/**
+	 * returns index reference of the graph
+	 * @return
+	 */
+	public int get_index(){ return this.index;}
+
 	/**
 	 * Sets this vertex to visited
 	 */

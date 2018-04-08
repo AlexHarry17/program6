@@ -13,7 +13,7 @@ public class Graph {
     private int graph_size = 0;
     private ArrayList<ArrayList<Integer>> graph = new ArrayList<ArrayList<Integer>>();
     private ArrayList<String> vertexes;
-    private PriorityQueue<Edge> edges;
+    private PriorityQueue<QueueEdge> edges;
 
     public Graph() {
 
@@ -30,8 +30,6 @@ public class Graph {
         for (int i = 0; i < graph_size; i++) {
             graph.add(new ArrayList<Integer>());
         }
-        // instantiates PriorityQueue when size is applicable.
-        edges = new PriorityQueue<Edge>((graph_size * graph_size), new Edge_Comparator());
     }
 
     /**
@@ -70,10 +68,10 @@ public class Graph {
             System.out.println("Insert failed on: " + inNumber);
         }
     }
+
     /**
      * Runs Prims Algorithm to create a Minimum Search Tree.
      * Does not modify graph, only makes references from it.
-     *
      */
     public void prim() {
         //starting vertex
@@ -84,17 +82,21 @@ public class Graph {
 
         //add all vertices to an ArrayList
         ArrayList<Vertex> vertices = new ArrayList<>();
-        ArrayList<Edge> mst = new ArrayList<>();
+        ArrayList<QueueEdge> mst = new ArrayList<>();
+
+        // instantiates PriorityQueue when size is applicable.
+        edges = new PriorityQueue<>((graph_size * graph_size));
 
         for (int i = 0; i < graph_size; i++) {
             // create new vertex for each vertex.
-            Vertex vertex = new Vertex(false, i, vertexes.get(i));
+            Vertex vertex = new Vertex(vertexes.get(i));
+            vertex.set_index(i);
             //chooses 'start' equal to the'vertex' when 'i' = 'rand_start'.
             if (random_start == i) {
                 //set the 'current' vertex's visited to true, and its length to 0: Requirements for start vertex.
                 current = vertex;
                 // change status of current vertex.
-                current.visited = true;
+                current.setVisited();
                 // adds all vertices to ArrayList for future reference.
                 vertices.add(current);
             } else {
@@ -106,20 +108,19 @@ public class Graph {
         add_to_queue(vertices, current);
         while (edges.peek() != null) {
             // obtains the minimum edge.
-            Edge min_edge = edges.poll();
+            QueueEdge min_edge = edges.poll();
             // obtains the new current vertex.
-            current = min_edge.tail;
+            current = min_edge.getVert2();
             mst.add(min_edge);
-            if (!current.visited) {
-                current.visited = true;
+            if (!current.isVisited()) {
+                current.setVisited();
             }
-            // remove invalid edges.
-            check_queue_invalid_edges();
             // add more edges to queue from a new vertex.
             add_to_queue(vertices, current);
         }
         print_mst(mst);
     }
+
     /**
      * This method adds every possible edge to the queue from a given vertex
      *
@@ -127,38 +128,39 @@ public class Graph {
      * @param current
      */
     private void add_to_queue(ArrayList<Vertex> vertices, Vertex current) {
+       int index = current.get_index();
         // checks each vertex.
         for (int i = 0; i < graph_size; i++) {
+            // remove invalid edges.
+            check_queue_invalid_edges();
             //if the edge in the graph does not equal infinity from the current vertex to the i'th vertex, set i'th vertex edge-weight.
-            if (graph.get(current.index).get(i) != Integer.MAX_VALUE && !vertices.get(i).visited) {
+            if (graph.get(index).get(i) != Integer.MAX_VALUE && !vertices.get(i).isVisited()) {
                 // create a new edge with its predecessor as current.
-                Edge edge = new Edge(current);
-                // assign the tail vertex
-                edge.tail = vertices.get(i);
-                //assign the weight of the edge.
-                edge.weight = graph.get(current.index).get(i);
+                QueueEdge edge = new QueueEdge(graph.get(index).get(i), current, vertices.get(i));
                 // adds the new edge to PriorityQueue.
                 edges.add(edge);
+
             }
         }
     }
+
     /**
      * This method checks an edge's validity PriorityQueue.
      * If invalid, then its removes from queue.
      */
-    public void check_queue_invalid_edges(){
-       // creates an array of the PriorityQueue.
-       Object[] array = edges.toArray();
-       // variable to check the edges validity.
-       Edge e;
-       // checks each edge in queue.
-       for(int i = 0; i < edges.size(); i++){
-           e = (Edge)array[i];
-           // if the tail has been visited, then it is not a valid edge anymore,remove it.
-           if(e.tail.visited){
-               edges.remove(e);
-           }
-       }
+    public void check_queue_invalid_edges() {
+        // creates an array of the PriorityQueue.
+        Object[] array = edges.toArray();
+        // variable to check the edges validity.
+        QueueEdge e;
+        // checks each edge in queue.
+        for (int i = 0; i < edges.size(); i++) {
+            e = (QueueEdge) array[i];
+            // if the tail has been visited, then it is not a valid edge anymore,remove it.
+            if (e.getVert2().isVisited()) {
+                edges.remove(e);
+            }
+        }
     }
 
     /**
@@ -166,13 +168,13 @@ public class Graph {
      *
      * @param mst
      */
-    public void print_mst(ArrayList<Edge> mst){
+    public void print_mst(ArrayList<QueueEdge> mst) {
         String v;
         // prints each edges head and tail names.
-        for(int i = 0; i < mst.size(); i++){
-            v = mst.get(i).head.vertex_name;
+        for (int i = 0; i < mst.size(); i++) {
+            v = mst.get(i).getVert1().name;
             System.out.print(v);
-            v = mst.get(i).tail.vertex_name;
+            v = mst.get(i).getVert2().name;
             System.out.print(v + " ");
         }
         System.out.println("\n");
@@ -300,60 +302,4 @@ public class Graph {
             return "" + value;
         }
     }
-
-    /**
-     * @Class Vertex creates objects to store data in regards to the adjacency matrix.
-     */
-    public static class Vertex {
-        // variable to hold visited if it has been visited or not
-        boolean visited;
-
-        // index from graph
-        int index;
-
-        // name of the vertex
-        String vertex_name;
-
-        public Vertex(boolean in_status, int in_index, String in_name) {
-            visited = in_status;
-            index = in_index;
-            vertex_name = in_name;
-        }
-    }
-
-    /**
-     * @Class Edge connects vertices.
-     * 'head' is the predecessor, 'tail' is the vertex that head connects to.
-     */
-    public static class Edge {
-        // weight of edge
-        int weight = 0;
-        // The parent,essentially, : The vertex in which the edge comes from,
-        // the edge's vertex is the vertex the edge connects to
-        Vertex head;
-        Vertex tail = null;
-
-        public Edge(Vertex in_head) {
-            head = in_head;
-        }
-    }
-
-    /**
-     * @Class Edge_Comparator sorts PriorityQueue from least to greatest.
-     * An element with the same priority as a previously inserted element
-     * will have less priority.
-     */
-    public class Edge_Comparator implements Comparator<Edge> {
-        // used to compare weights of edges.
-        @Override
-        public int compare(Edge e1, Edge e2) {
-            if (e1.weight < e2.weight) {
-                return -1;
-            } else if (e1.weight >= e2.weight) {
-                return 1;
-            }
-            return 0;
-        }
-    }
 }
-

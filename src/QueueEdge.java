@@ -49,7 +49,7 @@ public class QueueEdge implements Comparable<QueueEdge>{
     }
 
     public int compareTo(QueueEdge otherQueue) {    //compares the queues for sorting
-        if (this.edge > otherQueue.getEdge()) { // compares this edge with the edges in the queue
+        if (this.edge >= otherQueue.getEdge()) { // compares this edge with the edges in the queue
             return 1;   // returns if this edge is greater than an edge already in the queue
         } else {
             return -1; // returns if this edge is greater than an edge already in the queue
