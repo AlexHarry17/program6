@@ -15,13 +15,18 @@ and repeats the following until there are no more graphs remaining in the input:
 	- runs Floyd-Warshall's Algorithm and prints every step in finding all the shortest paths
 */
 public class Main {
+	// the value that represents infinity for this program
 	public static int infinity = Integer.MAX_VALUE;
-	private static Path file = Paths.get("input/input.csv");   //  path file location to grab input file
+	// path to the input file
+	private static Path file = Paths.get("input/input.csv");
+	// the contents of the current line in the input file
     private static String currentLine;
-    private static Graph graph = new Graph();;
-    private static boolean doOnce = true;
-    private static int current_row = 0;
-    private static int size = 0;
+    // the graph object that will be made from the input file
+    private static Graph graph = new Graph();
+    // simple use tracker variables
+    private static boolean doOnce = true; // for trigering special conditions
+    private static int current_row = 0;   // the current row of the matrix that is being added
+    private static int size = 0;          // the size of the matrix (the number of vertexes)
 
     public static void main(String[] args) {
         try (BufferedReader reader = Files.newBufferedReader(file)) {   //creates a new file reader

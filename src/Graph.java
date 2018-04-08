@@ -6,21 +6,19 @@ import java.util.Random;
 Authors: Alex Harry, Cory Johns, Justin Keeling
 Date: April 7, 2018
 Overview: Graph stores a two-dimensional array representation of the graph in the input file and
-contains all the functions for running Prim’s, kruskal’s, and Floyd-Warshall's Algorithms as well as
+contains all the functions for running Prim’s, Kruskal’s, and Floyd-Warshall's Algorithms as well as
 printing the graph.
 */
 public class Graph {
+	// the number of vertexes in the graph
     private int numVerts = 0;
+    // the base graph
     private ArrayList<ArrayList<Integer>> graph = new ArrayList<ArrayList<Integer>>();
+    // a list of each vertex in the graph
     private ArrayList<Vertex> vertexes;
-
-    public Graph() {
-
-    }
 
     /**
      * Sets the graph size and initializes the array list
-     *
      * @param size of the graph
      */
     public void set_graph_size(int size) {
@@ -33,7 +31,6 @@ public class Graph {
 
     /**
      * Adds all the vertex names given by the input to this graph's vertex name list
-     *
      * @param names of each vertex
      */
     public void set_vertexes(String[] names) {
@@ -47,7 +44,6 @@ public class Graph {
 
     /**
      * Inserts the given number into the graph at the next available position
-     *
      * @param inNumber
      */
     public void insert(int inNumber) {
@@ -69,6 +65,9 @@ public class Graph {
     }
 
     
+    /**
+     * Finds the Minimum Spanning Tree (MST) of graph by Prim's Algorithm and prints its edges to the console
+     */
     public void prim() {
     	/* definitions : 
     	 * - MST is a list of edges
@@ -135,7 +134,6 @@ public class Graph {
     			// check first vertex
     			if (mst.get(e).getVert1().isVisited()) {
     				queue.addAll(addAllLocalEdges(queue, mst.get(e).getVert1(), edgeList));
-    				
     			}
     			// check second vertex
     			if (mst.get(e).getVert2().isVisited()) {
@@ -161,23 +159,29 @@ public class Graph {
      * @param edgeList to look in
      */
     private ArrayList<QueueEdge> addAllLocalEdges(PriorityQueue<QueueEdge> queue, Vertex vert, ArrayList<QueueEdge> edgeList) {
+    	// set up a list of edges
     	ArrayList<QueueEdge> edges = new ArrayList<QueueEdge>();
     	
+    	// find all edges that have the parameter vertex and a unvisited vertex
     	for (QueueEdge edge : edgeList) {
+    		// check vert 1 for parameter vertex
     		if (edge.getVert1().equals(vert) && !edge.getVert2().isVisited()) {
     			edges.add(edge);
     		}
+    		// check vert 2 for parameter vertex
     		else if (edge.getVert2().equals(vert) && !edge.getVert1().isVisited()) {
     			edges.add(edge);
     		}
     	}
-    	
+    	// return all the edges that where found
     	return edges;
     }
 
+    /**
+     * Finds the Minimum Spanning Tree (MST) of graph by Kruskal's Algorithm and prints its edges to the console
+     */
     public void kruskal() {
         ArrayList<String> t = new ArrayList<String>(); //instantiates array t to return
-        ArrayList<ArrayList<Integer>> d = duplicate_matrix(graph);  // copy of graph
         PriorityQueue<QueueEdge> q = new PriorityQueue<QueueEdge>(new QueueEdge());    //creates a priority queue for kruskal algo
         Cluster clusterList = new Cluster(vertexes);  // creates a list of elementary clusters and will manage all clusters
         
@@ -186,9 +190,9 @@ public class Graph {
         	// loop though only the upper diagonal, by starting j at i
             for (int j = i; j < numVerts; j++) {
             	// checks if vertex is not infinity
-                if (!is_max_value(d.get(i).get(j))) { 
+                if (!is_max_value(graph.get(i).get(j))) { 
                     if (i != j) {   //checks that j != b, ex. A = A
-                        q.add(new QueueEdge(d.get(i).get(j), vertexes.get(i), vertexes.get(j))); // Adds to the queue
+                        q.add(new QueueEdge(graph.get(i).get(j), vertexes.get(i), vertexes.get(j))); // Adds to the queue
                     }
                 }
             }
@@ -241,7 +245,6 @@ public class Graph {
 
     /**
      * Makes a copy of the given matrix that is independent of the original
-     *
      * @param matrix ,the input matrix
      * @return a new matrix with the same content as the input
      */
@@ -266,7 +269,6 @@ public class Graph {
 
     /**
      * Tests if the input is the designated infinity for the adjacency matrix as determined by Main.java
-     *
      * @param test
      * @return true if test is equal to the infinity value of Main
      */
@@ -283,7 +285,6 @@ public class Graph {
 
     /**
      * Prints the given matrix with the given vertex names
-     *
      * @param matrix
      * @param vertex_names
      */
@@ -315,7 +316,6 @@ public class Graph {
 
     /**
      * Gets the String that represents the value at the given row & col of the matrix
-     *
      * @param matrix the source matrix
      * @param row    of the value
      * @param col    of the value
