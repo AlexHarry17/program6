@@ -12,7 +12,7 @@ printing the graph.
 public class Graph {
     private int graph_size = 0;
     private ArrayList<ArrayList<Integer>> graph = new ArrayList<ArrayList<Integer>>();
-    private ArrayList<String> vertexes;
+    private ArrayList<Vertex> vertexes;
 
     public Graph() {
 
@@ -38,10 +38,10 @@ public class Graph {
      */
     public void set_vertexes(String[] names) {
         // Initialize the name list
-        vertexes = new ArrayList<String>();
+        vertexes = new ArrayList<Vertex>();
         // append each name
         for (String name : names) {
-            vertexes.add(name);
+            vertexes.add(new Vertex(names));
         }
     }
 
@@ -105,7 +105,7 @@ public class Graph {
         while (!edges.isEmpty() || mst.size() < graph_size) {
             // obtains the minimum edge.
             Edge min_edge = edges.poll();
-            System.out.println("min_edge.weight = "+ min_edge.weight + "\nmin_edge.predecessor.index = " + min_edge.predecessor.index);
+            System.out.println("min_edge.weight = " + min_edge.weight + "\nmin_edge.predecessor.index = " + min_edge.predecessor.index);
             // obtains the new current vertex.
             Vertex temp_vertex = vertices.get(min_edge.index);
 
@@ -131,7 +131,7 @@ public class Graph {
                 //set the vertex's edge predecessor to the current node.
                 vertices.get(i).edge.predecessor = current;
                 vertices.get(i).edge.index = i;
-               ////// System.out.println(" add_to_queue if statement: edge.weight = " + vertices.get(i).edge.weight);
+                ////// System.out.println(" add_to_queue if statement: edge.weight = " + vertices.get(i).edge.weight);
                 //add to queue
                 e.add(vertices.get(i).edge);
             }
@@ -144,7 +144,31 @@ public class Graph {
     public void kruuskal() {
         // copy graph for use here
         ArrayList<ArrayList<Integer>> d = duplicate_matrix(graph);
+        ArrayList<String> t = new ArrayList<>();
+        PriorityQueue<QueueEdge> q = new PriorityQueue<>();
+        Cluster c = new Cluster(vertexes);
+
+        for (int i = 0; i < graph_size; i++) {
+            for (int j = 0; j < graph_size; j++) {
+                if (i != j || !is_max_value(d.get(i).get(j))) { // checks if i == j, or if the vertex is infinity
+                    q.add(new QueueEdge(d.get(i).get(j), vertexes.get(i), vertexes.get(j))); //adds a new queueEdge to the priority queue
+                }
+            }
+            while (t.size() < graph_size - 1) { //loops while t size is less than n-1 edges
+                //temp queue edge variable
+                QueueEdge temp = q.poll();
+                //checks that vertex 1 is not in the same cluster as vertex 2
+                if (!c.isSameCluster(temp.getVert1().toString(), temp.getVert2().toString())) {
+                    //adds the vertex to t array list
+                    t.add(temp.getVert1().toString() + temp.getVert2().toString());
+                    //merges the clusters of vertex 1 and vertex 2
+                    c.mergeClusters(temp.getVert1().toString(), temp.getVert2().toString());
+                }
+            }
+            System.out.println(t);
+        }
     }
+
 
     /**
      * Runs Floyd-Warshall's algorithm on the instance variable graph
@@ -221,7 +245,7 @@ public class Graph {
      * @param matrix
      * @param vertex_names
      */
-    public void print_graph(ArrayList<ArrayList<Integer>> matrix, ArrayList<String> vertex_names) {
+    public void print_graph(ArrayList<ArrayList<Integer>> matrix, ArrayList<Vertex> vertex_names) {
         // print a spacer
         System.out.print("  ");
         // print vertex names along the top of the matrix
