@@ -75,7 +75,7 @@ public class Main {
                     	
                     	// run the Kruuskal’s algorithm part
                     	System.out.println("Started Kruuskal’s Algorithm...");
-                    	graph.kruuskal();
+                    	graph.kruskal();
                     	
                     	// run the Floyd-Warshall's algorithm part
                     	System.out.println("Started Floyd-Warshall's Algorithm...");
