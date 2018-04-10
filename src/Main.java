@@ -41,7 +41,7 @@ public class Main {
             		if (doOnce) {
             			size = splitLine.length;
             			graph = new Graph();
-            			graph.set_graph_size(size);
+            			graph.set_numVerts(size);
             			graph.set_vertexes(splitLine);
             			doOnce = false;
             		}

@@ -22,7 +22,7 @@ public class Graph {
      * Sets the graph size and initializes the array list
      * @param size of the graph
      */
-    public void set_graph_size(int size) {
+    public void set_numVerts(int size) {
         numVerts = size;
         // Initialize the graph
         for (int i = 0; i < numVerts; i++) {
@@ -52,7 +52,7 @@ public class Graph {
 
         for (int i = 0; i < numVerts; i++) {
             // append inNumber to the last empty location in the graph
-            // REQUIRES graph_size to be accurate!
+            // REQUIRES numVerts to be accurate!
             if (graph.get(i).size() < numVerts) {
                 graph.get(i).add(inNumber);
                 success = true;
@@ -108,18 +108,18 @@ public class Graph {
         Vertex current = null;
 
         //used to randomly choose starting vertex
-        int random_start = 0;//(int) (Math.random() * graph_size);
+        int random_start = 0;//(int) (Math.random() * numVerts);
 
         //add all vertices to an ArrayList
         ArrayList<Vertex> vertices = new ArrayList<>();
         ArrayList<QueueEdge> mst = new ArrayList<>();
 
         // instantiates PriorityQueue when size is applicable.
-        edges = new PriorityQueue<>((graph_size * graph_size));
+        edges = new PriorityQueue<>((numVerts * numVerts));
 
-        for (int i = 0; i < graph_size; i++) {
+        for (int i = 0; i < numVerts; i++) {
             // create new vertex for each vertex.
-            Vertex vertex = new Vertex(vertexes.get(i));
+            Vertex vertex = new Vertex(vertexes.get(i).name);
             vertex.set_index(i);
             //chooses 'start' equal to the'vertex' when 'i' = 'rand_start'.
             if (random_start == i) {
@@ -148,7 +148,7 @@ public class Graph {
             // add more edges to queue from a new vertex.
             add_to_queue(vertices, current);
         }
-        print_mst(mst);
+        System.out.println(mst);    //prints the mst for prims algorithm
     }
 
     /**
@@ -160,7 +160,7 @@ public class Graph {
     private void add_to_queue(ArrayList<Vertex> vertices, Vertex current) {
        int index = current.get_index();
         // checks each vertex.
-        for (int i = 0; i < graph_size; i++) {
+        for (int i = 0; i < numVerts; i++) {
             // remove invalid edges.
             check_queue_invalid_edges();
             //if the edge in the graph does not equal infinity from the current vertex to the i'th vertex, set i'th vertex edge-weight.
@@ -193,22 +193,6 @@ public class Graph {
         }
     }
 
-    /**
-     * Prints the MST for Prim's Algorithm.
-     *
-     * @param mst
-     */
-    public void print_mst(ArrayList<QueueEdge> mst) {
-        String v;
-        // prints each edges head and tail names.
-        for (int i = 0; i < mst.size(); i++) {
-            v = mst.get(i).getVert1().name;
-            System.out.print(v);
-            v = mst.get(i).getVert2().name;
-            System.out.print(v + " ");
-        }
-        System.out.println("\n");
-    }
 
     /**
      * Runs Floyd-Warshall's algorithm on the instance variable graph
