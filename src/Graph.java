@@ -16,6 +16,7 @@ public class Graph {
     private ArrayList<ArrayList<Integer>> graph = new ArrayList<ArrayList<Integer>>();
     // a list of each vertex in the graph
     private ArrayList<Vertex> vertexes;
+    private PriorityQueue<QueueEdge> edges;
 
     /**
      * Sets the graph size and initializes the array list
@@ -63,117 +64,6 @@ public class Graph {
             System.out.println("Insert failed on: " + inNumber);
         }
     }
-    
-    /**
-     * Finds the Minimum Spanning Tree (MST) of graph by Prim's Algorithm and prints its edges to the console
-     */
-    public void prim() {
-    	/* definitions : 
-    	 * - MST is a list of edges
-    	 * - Edge is a class containing the weight, vertex 1, vertex 2 for the edge, the print value is vertex1.name + vertex2.name
-    	 * - vertex is a class containing the vertex name, visited flag
-    	 * Need:
-    	 * - a list of all vertex objects (already implemented as the global vertexes field)
-    	 * - MST (empty at start)
-    	 * - a list of all edges in the graph but don’t include duplicates (QueueEdge.equals will work here)
-    	 * 	- start the list of edges with references to the list of vertexes (use QueueEdge it is already set up for the priority queue)
-    	 */
-    	
-    	// set up the start MST
-    	ArrayList<QueueEdge> mst = new ArrayList<QueueEdge>();
-    	// make a new priority queue
-    	PriorityQueue<QueueEdge> queue = new PriorityQueue<QueueEdge>(new QueueEdge());
-    	
-    	// set up the list of edges without duplicates
-    	// add all edges to the list
-    	ArrayList<QueueEdge> edgeList = new ArrayList<QueueEdge>();
-    	// loop though only the upper diagonal to prevent duplicates, by starting j at i
-        for (int i = 0; i < numVerts; i++) {
-            for (int j = i; j < numVerts; j++) {
-            	// checks if vertex is not infinity
-                if (!is_max_value(graph.get(i).get(j))) { 
-                    if (i != j) {   //checks that j != b, ex. A = A
-                        edgeList.add(new QueueEdge(graph.get(i).get(j), vertexes.get(i), vertexes.get(j))); // Adds to the queue
-                    }
-                }
-            }
-        }
-        Random random = new Random();
-    	// pick a start vertex
-        Vertex start = vertexes.get(random.nextInt(numVerts));
-
-    	// set vertex as visited
-        start.setVisited();
-        
-        // add lowest weight edge from start to queue
-        for (QueueEdge edge : edgeList) {
-        	if (edge.getVert1().equals(start) || edge.getVert2().equals(start)) {
-        		queue.add(edge);
-        	}
-        }
-        // add lowest weight edge containing start to the MST
-        mst.add(queue.poll());
-        if (mst.get(0).getVert1().equals(start)) {
-        	mst.get(0).getVert2().setVisited();
-        }
-        else {
-        	mst.get(0).getVert1().setVisited();
-        }
-
-    	// while MST has less then the number of vertexes - 1 edges in it
-        while (mst.size() < numVerts - 1) {
-            // empty the queue for the new local vertexes
-			queue.clear();
-			
-    		// for all vertexes in the MST (i.e. all vertexes with visited == true)
-    		for (int e=0; e<mst.size(); e++) {
-    			// make the cut i.e.:
-    			// add all edges containing the visited vertexes in position 1 to a priority queue
-    			// if visited is false for vertex 2
-    			// check first vertex
-    			if (mst.get(e).getVert1().isVisited()) {
-    				queue.addAll(addAllLocalEdges(queue, mst.get(e).getVert1(), edgeList));
-    			}
-    			// check second vertex
-    			if (mst.get(e).getVert2().isVisited()) {
-    				queue.addAll(addAllLocalEdges(queue, mst.get(e).getVert2(), edgeList));
-    			}
-    		}
-    		// pick the best one
-			QueueEdge best = queue.poll();
-			// add the corresponding edge to to the MST (i.e. vertex1 -> vertex2)
-			mst.add(best);
-			
-			// set the other vertex as visited
-			best.setAllVisited();
-        }
-        System.out.println(mst);  // prints array list
-    }
-    
-    /**
-     * Adds all edges that have vert in them to the given queue, by checking all edges in the given edgeList
-     * @param queue to add to
-     * @param vert to look for
-     * @param edgeList to look in
-     */
-    private ArrayList<QueueEdge> addAllLocalEdges(PriorityQueue<QueueEdge> queue, Vertex vert, ArrayList<QueueEdge> edgeList) {
-    	// set up a list of edges
-    	ArrayList<QueueEdge> edges = new ArrayList<QueueEdge>();
-    	
-    	// find all edges that have the parameter vertex and a unvisited vertex
-    	for (QueueEdge edge : edgeList) {
-    		// check vert 1 for parameter vertex
-    		if (edge.getVert1().equals(vert) && !edge.getVert2().isVisited()) {
-    			edges.add(edge);
-    		}
-    		// check vert 2 for parameter vertex
-    		else if (edge.getVert2().equals(vert) && !edge.getVert1().isVisited()) {
-    			edges.add(edge);
-    		}
-    	}
-    	// return all the edges that where found
-    	return edges;
-    }
 
     /**
      * Finds the Minimum Spanning Tree (MST) of graph by Kruskal's Algorithm and prints its edges to the console
@@ -207,6 +97,117 @@ public class Graph {
             }
         }
         System.out.println(t);  // prints array list
+      }
+  
+    /**
+     * Runs Prims Algorithm to create a Minimum Search Tree.
+     * Does not modify graph, only makes references from it.
+     */
+    public void prim() {
+        //starting vertex
+        Vertex current = null;
+
+        //used to randomly choose starting vertex
+        int random_start = 0;//(int) (Math.random() * graph_size);
+
+        //add all vertices to an ArrayList
+        ArrayList<Vertex> vertices = new ArrayList<>();
+        ArrayList<QueueEdge> mst = new ArrayList<>();
+
+        // instantiates PriorityQueue when size is applicable.
+        edges = new PriorityQueue<>((graph_size * graph_size));
+
+        for (int i = 0; i < graph_size; i++) {
+            // create new vertex for each vertex.
+            Vertex vertex = new Vertex(vertexes.get(i));
+            vertex.set_index(i);
+            //chooses 'start' equal to the'vertex' when 'i' = 'rand_start'.
+            if (random_start == i) {
+                //set the 'current' vertex's visited to true, and its length to 0: Requirements for start vertex.
+                current = vertex;
+                // change status of current vertex.
+                current.setVisited();
+                // adds all vertices to ArrayList for future reference.
+                vertices.add(current);
+            } else {
+                // adds all vertices to ArrayList for future reference.
+                vertices.add(vertex);
+            }
+        }
+        // add elements to queue before while loop
+        add_to_queue(vertices, current);
+        while (edges.peek() != null) {
+            // obtains the minimum edge.
+            QueueEdge min_edge = edges.poll();
+            // obtains the new current vertex.
+            current = min_edge.getVert2();
+            mst.add(min_edge);
+            if (!current.isVisited()) {
+                current.setVisited();
+            }
+            // add more edges to queue from a new vertex.
+            add_to_queue(vertices, current);
+        }
+        print_mst(mst);
+    }
+
+    /**
+     * This method adds every possible edge to the queue from a given vertex
+     *
+     * @param vertices
+     * @param current
+     */
+    private void add_to_queue(ArrayList<Vertex> vertices, Vertex current) {
+       int index = current.get_index();
+        // checks each vertex.
+        for (int i = 0; i < graph_size; i++) {
+            // remove invalid edges.
+            check_queue_invalid_edges();
+            //if the edge in the graph does not equal infinity from the current vertex to the i'th vertex, set i'th vertex edge-weight.
+            if (graph.get(index).get(i) != Integer.MAX_VALUE && !vertices.get(i).isVisited()) {
+                // create a new edge with its predecessor as current.
+                QueueEdge edge = new QueueEdge(graph.get(index).get(i), current, vertices.get(i));
+                // adds the new edge to PriorityQueue.
+                edges.add(edge);
+
+            }
+        }
+    }
+
+    /**
+     * This method checks an edge's validity PriorityQueue.
+     * If invalid, then its removes from queue.
+     */
+    public void check_queue_invalid_edges() {
+        // creates an array of the PriorityQueue.
+        Object[] array = edges.toArray();
+        // variable to check the edges validity.
+        QueueEdge e;
+        // checks each edge in queue.
+        for (int i = 0; i < edges.size(); i++) {
+            e = (QueueEdge) array[i];
+            // if the tail has been visited, then it is not a valid edge anymore,remove it.
+            if (e.getVert2().isVisited()) {
+                edges.remove(e);
+            }
+        }
+    }
+
+    /**
+     * Prints the MST for Prim's Algorithm.
+     *
+     * @param mst
+     */
+    public void print_mst(ArrayList<QueueEdge> mst) {
+        String v;
+        // prints each edges head and tail names.
+        for (int i = 0; i < mst.size(); i++) {
+            v = mst.get(i).getVert1().name;
+            System.out.print(v);
+            v = mst.get(i).getVert2().name;
+            System.out.print(v + " ");
+        }
+        System.out.println("\n");
     }
 
     /**
@@ -328,4 +329,3 @@ public class Graph {
         }
     }
 }
-
