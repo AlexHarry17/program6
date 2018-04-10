@@ -1,6 +1,5 @@
 import java.util.ArrayList;
 import java.util.PriorityQueue;
-import java.util.Random;
 
 /*
 Authors: Alex Harry, Cory Johns, Justin Keeling
@@ -108,7 +107,7 @@ public class Graph {
         Vertex current = null;
 
         //used to randomly choose starting vertex
-        int random_start = 0;//(int) (Math.random() * numVerts);
+        int random_start = (int) (Math.random() * numVerts);
 
         //add all vertices to an ArrayList
         ArrayList<Vertex> vertices = new ArrayList<>();
