@@ -1,10 +1,12 @@
+import java.util.Comparator;
+
 /*
 Authors: Alex Harry, Cory Johns, Justin Keeling
-Date: April 2, 2018
+Date: April 7, 2018
 Overview: QueueEdge contains the weight and both vertexes that compose this edge as well as all
 needed functions for interacting with it such as a comparable definition
 */
-public class QueueEdge implements Comparable<QueueEdge>{
+public class QueueEdge implements Comparator<QueueEdge>, Comparable<QueueEdge>{
     private int edge;
     private Vertex vert1;
     private Vertex vert2;
@@ -21,11 +23,52 @@ public class QueueEdge implements Comparable<QueueEdge>{
     public Vertex getVert2() {
         return vert2;
     }   //getter for vertex 2
+    
+    /**
+     * For use as the comparator don't use as normal constructor
+     */
+    public QueueEdge() {
+    	
+    }
 
     public QueueEdge(int inEdge, Vertex inVert1, Vertex inVert2) {
         edge = inEdge;
         vert1 = inVert1;
         vert2 = inVert2;
+    }
+    
+    /**
+     * Checks if this edge contains the given vertex
+     * @param vert
+     * @return true if vert is in this edge
+     */
+    public boolean containsVert(Vertex vert) {
+    	return vert1.equals(vert) || vert2.equals(vert);
+    }
+    
+    /**
+     * gets the other vertex in this edge when given one of the vertexes
+     * @param vert
+     * @return the vertex other than vert, null if vert is not in the edge
+     */
+    public Vertex getOtherVert(Vertex vert) {
+    	if (vert1.equals(vert)) {
+    		return vert2;
+    	}
+    	else if (vert2.equals(vert)) {
+    		return vert1;
+    	}
+    	else {
+    		return null;
+    	}
+    }
+    
+    /**
+     * Sets all vertexes in this edge to visited
+     */
+    public void setAllVisited() {
+    	vert1.setVisited();
+    	vert2.setVisited();
     }
     
     /**
@@ -55,5 +98,21 @@ public class QueueEdge implements Comparable<QueueEdge>{
             return -1; // returns if this edge is greater than an edge already in the queue
 
         }
+    }
+    
+    public int compare(QueueEdge e1, QueueEdge e2) {
+    	if (e1.edge > e2.edge) {
+    		return 1;
+    	}
+    	else if (e1.edge < e2.edge) {
+    		return -1;
+    	}
+    	else {
+    		return 0;
+    	}
+    }
+    
+    public String toString() {
+    	return vert1.name + vert2.name;
     }
 }
