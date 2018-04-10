@@ -38,7 +38,7 @@ public class Graph {
         vertexes = new ArrayList<Vertex>();
         // append each name
         for (String name : names) {
-            vertexes.add(new Vertex(name));
+            vertexes.add(new Vertex(names));
         }
     }
 
@@ -63,7 +63,6 @@ public class Graph {
             System.out.println("Insert failed on: " + inNumber);
         }
     }
-
     
     /**
      * Finds the Minimum Spanning Tree (MST) of graph by Prim's Algorithm and prints its edges to the console
@@ -100,10 +99,10 @@ public class Graph {
             }
         }
         Random random = new Random();
-    	// pick a start vertex
+    	  // pick a start vertex
         Vertex start = vertexes.get(random.nextInt(numVerts));
 
-    	// set vertex as visited
+    	  // set vertex as visited
         start.setVisited();
         
         // add lowest weight edge from start to queue
@@ -121,10 +120,10 @@ public class Graph {
         	mst.get(0).getVert1().setVisited();
         }
 
-    	// while MST has less then the number of vertexes - 1 edges in it
+    	  // while MST has less then the number of vertexes - 1 edges in it
         while (mst.size() < numVerts - 1) {
-        	// empty the queue for the new local vertexes
-			queue.clear();
+        // empty the queue for the new local vertexes
+			  queue.clear();
 			
     		// for all vertexes in the MST (i.e. all vertexes with visited == true)
     		for (int e=0; e<mst.size(); e++) {
@@ -147,7 +146,7 @@ public class Graph {
 			
 			// set the other vertex as visited
 			best.setAllVisited();
-        }
+      }
         
         System.out.println(mst);  // prints array list
     }

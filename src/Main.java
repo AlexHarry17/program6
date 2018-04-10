@@ -11,7 +11,7 @@ Overview: Program reads in the graph containing the adjacency matrix from the in
 and repeats the following until there are no more graphs remaining in the input:
 	- prints the graph
 	- runs Prim’s Algorithm and prints the edges in the minimum spanning tree
-	- runs kruskal’s Algorithm and prints the edges in the minimum spanning tree
+	- runs Kruuskal’s Algorithm and prints the edges in the minimum spanning tree
 	- runs Floyd-Warshall's Algorithm and prints every step in finding all the shortest paths
 */
 public class Main {
@@ -73,9 +73,9 @@ public class Main {
                     	System.out.println("Started Prim’s Algorithm...");
                     	graph.prim();
                     	
-                    	// run the kruskal’s algorithm part
-                    	System.out.println("Started Kruskal’s Algorithm...");
-                    	graph.kruskal();
+                    	// run the Kruuskal’s algorithm part
+                    	System.out.println("Started Kruuskal’s Algorithm...");
+                    	graph.kruuskal();
                     	
                     	// run the Floyd-Warshall's algorithm part
                     	System.out.println("Started Floyd-Warshall's Algorithm...");
