@@ -1,39 +1,36 @@
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.PriorityQueue;
+import java.util.Random;
 
 /*
 Authors: Alex Harry, Cory Johns, Justin Keeling
-Date: April 2, 2018
+Date: April 7, 2018
 Overview: Graph stores a two-dimensional array representation of the graph in the input file and
-contains all the functions for running Prim’s, Kruuskal’s, and Floyd-Warshall's Algorithms as well as
+contains all the functions for running Prim’s, Kruskal’s, and Floyd-Warshall's Algorithms as well as
 printing the graph.
 */
 public class Graph {
-    private int graph_size = 0;
+	// the number of vertexes in the graph
+    private int numVerts = 0;
+    // the base graph
     private ArrayList<ArrayList<Integer>> graph = new ArrayList<ArrayList<Integer>>();
+    // a list of each vertex in the graph
     private ArrayList<Vertex> vertexes;
-
-    public Graph() {
-
-    }
 
     /**
      * Sets the graph size and initializes the array list
-     *
      * @param size of the graph
      */
     public void set_graph_size(int size) {
-        graph_size = size;
+        numVerts = size;
         // Initialize the graph
-        for (int i = 0; i < graph_size; i++) {
+        for (int i = 0; i < numVerts; i++) {
             graph.add(new ArrayList<Integer>());
         }
     }
 
     /**
      * Adds all the vertex names given by the input to this graph's vertex name list
-     *
      * @param names of each vertex
      */
     public void set_vertexes(String[] names) {
@@ -47,16 +44,15 @@ public class Graph {
 
     /**
      * Inserts the given number into the graph at the next available position
-     *
      * @param inNumber
      */
     public void insert(int inNumber) {
         boolean success = false;
 
-        for (int i = 0; i < graph_size; i++) {
+        for (int i = 0; i < numVerts; i++) {
             // append inNumber to the last empty location in the graph
             // REQUIRES graph_size to be accurate!
-            if (graph.get(i).size() < graph_size) {
+            if (graph.get(i).size() < numVerts) {
                 graph.get(i).add(inNumber);
                 success = true;
                 break;
@@ -67,108 +63,152 @@ public class Graph {
             System.out.println("Insert failed on: " + inNumber);
         }
     }
-
+    
+    /**
+     * Finds the Minimum Spanning Tree (MST) of graph by Prim's Algorithm and prints its edges to the console
+     */
     public void prim() {
-        //starting vertex
-        Vertex current = null;
-        //used to randomly choose starting vertex
-        int random_start = 0;//(int) (Math.random() * graph_size);
-
-        //add all vertices to an ArrayList
-        ArrayList<Vertex> vertices = new ArrayList<>();
-        ArrayList<Vertex> mst = new ArrayList<>();
-
-        for (int i = 0; i < graph_size; i++) {
-
-            //creates a new vertex with its 'edge' being the edge connecting it to its predecessor(Parent).
-            //Vertex also contains 'visited' of whether or not it has been visited & its index in array list.
-            //Edge contains predecessor starting at null, and weight at infinity.
-            Vertex vertex = new Vertex(new Edge(Integer.MAX_VALUE, null), false, i);
-            //chooses 'start' equal to the'vertex' when 'i' = 'rand_start'.
-            if (random_start == i) {
-                //set the 'current' vertex's visited to true, and its length to 0: Requirements for start vertex.
-                current = vertex;
-                current.visited = true;
-                current.edge.weight = 0;
-                vertices.add(current);
-                // add the starting vertex, 'current' , to mst.
-                mst.add(current);
-                System.out.println("start Current Index = " + current.index + "\nrandstart = " + random_start);
-            } else {
-                vertices.add(vertex);
-            }
-        }
-        PriorityQueue<Edge> edges = new PriorityQueue<Edge>(graph_size * graph_size, new Edge_Comparator());
-        // obtains all the possible edges and puts them into PriorityQueue.
-        edges = add_to_queue(vertices, current, edges);
-
-        while (!edges.isEmpty() || mst.size() < graph_size) {
-            // obtains the minimum edge.
-            Edge min_edge = edges.poll();
-            System.out.println("min_edge.weight = " + min_edge.weight + "\nmin_edge.predecessor.index = " + min_edge.predecessor.index);
-            // obtains the new current vertex.
-            Vertex temp_vertex = vertices.get(min_edge.index);
-
-            if (!temp_vertex.visited) {
-                // adds the new current vertex to the tree.
-                current = temp_vertex;
-
-                mst.add(current);
-                current.visited = true;
-                System.out.println(vertices.get(current.index));
-            }
-            edges = add_to_queue(vertices, current, edges);
-        }
-    }
-
-    private PriorityQueue<Edge> add_to_queue(ArrayList<Vertex> vertices, Vertex current, PriorityQueue<Edge> e) {
-        for (int i = 0; i < graph_size; i++) {
-
-            //if the edge in the graph does not equal infinity from the current vertex to the i'th vertex, set i'th vertex edge-weight.
-            if (graph.get(current.index).get(i) != Integer.MAX_VALUE && !vertices.get(i).visited) {
-                vertices.get(i).edge.weight = graph.get(current.index).get(i);
-
-                //set the vertex's edge predecessor to the current node.
-                vertices.get(i).edge.predecessor = current;
-                vertices.get(i).edge.index = i;
-                ////// System.out.println(" add_to_queue if statement: edge.weight = " + vertices.get(i).edge.weight);
-                //add to queue
-                e.add(vertices.get(i).edge);
-            }
-        }
-        //returns the priority queue with new edges
-
-        return e;
-    }
-
-    public void kruuskal() {
-        // copy graph for use here
-        ArrayList<ArrayList<Integer>> d = duplicate_matrix(graph);
-        ArrayList<String> t = new ArrayList<>();
-        PriorityQueue<QueueEdge> q = new PriorityQueue<>();
-        Cluster c = new Cluster(vertexes);
-
-        for (int i = 0; i < graph_size; i++) {
-            for (int j = 0; j < graph_size; j++) {
-                if (i != j || !is_max_value(d.get(i).get(j))) { // checks if i == j, or if the vertex is infinity
-                    q.add(new QueueEdge(d.get(i).get(j), vertexes.get(i), vertexes.get(j))); //adds a new queueEdge to the priority queue
+    	/* definitions : 
+    	 * - MST is a list of edges
+    	 * - Edge is a class containing the weight, vertex 1, vertex 2 for the edge, the print value is vertex1.name + vertex2.name
+    	 * - vertex is a class containing the vertex name, visited flag
+    	 * Need:
+    	 * - a list of all vertex objects (already implemented as the global vertexes field)
+    	 * - MST (empty at start)
+    	 * - a list of all edges in the graph but don’t include duplicates (QueueEdge.equals will work here)
+    	 * 	- start the list of edges with references to the list of vertexes (use QueueEdge it is already set up for the priority queue)
+    	 */
+    	
+    	// set up the start MST
+    	ArrayList<QueueEdge> mst = new ArrayList<QueueEdge>();
+    	// make a new priority queue
+    	PriorityQueue<QueueEdge> queue = new PriorityQueue<QueueEdge>(new QueueEdge());
+    	
+    	// set up the list of edges without duplicates
+    	// add all edges to the list
+    	ArrayList<QueueEdge> edgeList = new ArrayList<QueueEdge>();
+    	// loop though only the upper diagonal to prevent duplicates, by starting j at i
+        for (int i = 0; i < numVerts; i++) {
+            for (int j = i; j < numVerts; j++) {
+            	// checks if vertex is not infinity
+                if (!is_max_value(graph.get(i).get(j))) { 
+                    if (i != j) {   //checks that j != b, ex. A = A
+                        edgeList.add(new QueueEdge(graph.get(i).get(j), vertexes.get(i), vertexes.get(j))); // Adds to the queue
+                    }
                 }
             }
-            while (t.size() < graph_size - 1) { //loops while t size is less than n-1 edges
-                //temp queue edge variable
-                QueueEdge temp = q.poll();
-                //checks that vertex 1 is not in the same cluster as vertex 2
-                if (!c.isSameCluster(temp.getVert1().toString(), temp.getVert2().toString())) {
-                    //adds the vertex to t array list
-                    t.add(temp.getVert1().toString() + temp.getVert2().toString());
-                    //merges the clusters of vertex 1 and vertex 2
-                    c.mergeClusters(temp.getVert1().toString(), temp.getVert2().toString());
-                }
-            }
-            System.out.println(t);
         }
+        Random random = new Random();
+    	  // pick a start vertex
+        Vertex start = vertexes.get(random.nextInt(numVerts));
+
+    	  // set vertex as visited
+        start.setVisited();
+        
+        // add lowest weight edge from start to queue
+        for (QueueEdge edge : edgeList) {
+        	if (edge.getVert1().equals(start) || edge.getVert2().equals(start)) {
+        		queue.add(edge);
+        	}
+        }
+        // add lowest weight edge containing start to the MST
+        mst.add(queue.poll());
+        if (mst.get(0).getVert1().equals(start)) {
+        	mst.get(0).getVert2().setVisited();
+        }
+        else {
+        	mst.get(0).getVert1().setVisited();
+        }
+
+    	  // while MST has less then the number of vertexes - 1 edges in it
+        while (mst.size() < numVerts - 1) {
+        // empty the queue for the new local vertexes
+			  queue.clear();
+			
+    		// for all vertexes in the MST (i.e. all vertexes with visited == true)
+    		for (int e=0; e<mst.size(); e++) {
+    			// make the cut i.e.:
+    			// add all edges containing the visited vertexes in position 1 to a priority queue
+    			// if visited is false for vertex 2
+    			// check first vertex
+    			if (mst.get(e).getVert1().isVisited()) {
+    				queue.addAll(addAllLocalEdges(queue, mst.get(e).getVert1(), edgeList));
+    			}
+    			// check second vertex
+    			if (mst.get(e).getVert2().isVisited()) {
+    				queue.addAll(addAllLocalEdges(queue, mst.get(e).getVert2(), edgeList));
+    			}
+    		}
+    		// pick the best one
+			QueueEdge best = queue.poll();
+			// add the corresponding edge to to the MST (i.e. vertex1 -> vertex2)
+			mst.add(best);
+			
+			// set the other vertex as visited
+			best.setAllVisited();
+      }
+        
+        System.out.println(mst);  // prints array list
+    }
+    
+    /**
+     * Adds all edges that have vert in them to the given queue, by checking all edges in the given edgeList
+     * @param queue to add to
+     * @param vert to look for
+     * @param edgeList to look in
+     */
+    private ArrayList<QueueEdge> addAllLocalEdges(PriorityQueue<QueueEdge> queue, Vertex vert, ArrayList<QueueEdge> edgeList) {
+    	// set up a list of edges
+    	ArrayList<QueueEdge> edges = new ArrayList<QueueEdge>();
+    	
+    	// find all edges that have the parameter vertex and a unvisited vertex
+    	for (QueueEdge edge : edgeList) {
+    		// check vert 1 for parameter vertex
+    		if (edge.getVert1().equals(vert) && !edge.getVert2().isVisited()) {
+    			edges.add(edge);
+    		}
+    		// check vert 2 for parameter vertex
+    		else if (edge.getVert2().equals(vert) && !edge.getVert1().isVisited()) {
+    			edges.add(edge);
+    		}
+    	}
+    	// return all the edges that where found
+    	return edges;
     }
 
+    /**
+     * Finds the Minimum Spanning Tree (MST) of graph by Kruskal's Algorithm and prints its edges to the console
+     */
+    public void kruskal() {
+        ArrayList<String> t = new ArrayList<String>(); //instantiates array t to return
+        PriorityQueue<QueueEdge> q = new PriorityQueue<QueueEdge>(new QueueEdge());    //creates a priority queue for kruskal algo
+        Cluster clusterList = new Cluster(vertexes);  // creates a list of elementary clusters and will manage all clusters
+        
+        // add all edges to the queue
+        for (int i = 0; i < numVerts; i++) {
+        	// loop though only the upper diagonal, by starting j at i
+            for (int j = i; j < numVerts; j++) {
+            	// checks if vertex is not infinity
+                if (!is_max_value(graph.get(i).get(j))) { 
+                    if (i != j) {   //checks that j != b, ex. A = A
+                        q.add(new QueueEdge(graph.get(i).get(j), vertexes.get(i), vertexes.get(j))); // Adds to the queue
+                    }
+                }
+            }
+        }
+        while (t.size() < numVerts - 1){    //loops while number of edges in MST is less then n-1
+            QueueEdge edge_poll = q.poll();  // temp variable that pulls from the queue
+            
+            // check if the two vertexes of the poll edge are not in the same cluster
+            if (!clusterList.isSameCluster(edge_poll.getVert1(), edge_poll.getVert2())) {
+            	// adds to t array list
+                t.add((edge_poll.getVert1().name + edge_poll.getVert2().name));
+                // merge clusters of vert 1 & 2
+                clusterList.mergeClusters(edge_poll.getVert1(), edge_poll.getVert2());
+            }
+        }
+        System.out.println(t);  // prints array list
+    }
 
     /**
      * Runs Floyd-Warshall's algorithm on the instance variable graph
@@ -177,11 +217,16 @@ public class Graph {
     public void floyd_warshall() {
         // copy graph for use here
         ArrayList<ArrayList<Integer>> d = duplicate_matrix(graph);
+        
+        // set diagonal to 0
+        for (int i=0; i < numVerts; i++) {
+        	d.get(i).set(i, 0);
+        }
 
         // find the shortest path
-        for (int k = 0; k < graph_size; k++) {
-            for (int i = 0; i < graph_size; i++) {
-                for (int j = 0; j < graph_size; j++) {
+        for (int k = 0; k < numVerts; k++) {
+            for (int i = 0; i < numVerts; i++) {
+                for (int j = 0; j < numVerts; j++) {
                     // cannot perform arithmetic on infinity
                     if (!is_max_value(d.get(i).get(k).intValue()) && !is_max_value(d.get(k).get(j).intValue())) {
                         // test if path is shorter then current one
@@ -199,7 +244,6 @@ public class Graph {
 
     /**
      * Makes a copy of the given matrix that is independent of the original
-     *
      * @param matrix ,the input matrix
      * @return a new matrix with the same content as the input
      */
@@ -224,7 +268,6 @@ public class Graph {
 
     /**
      * Tests if the input is the designated infinity for the adjacency matrix as determined by Main.java
-     *
      * @param test
      * @return true if test is equal to the infinity value of Main
      */
@@ -241,7 +284,6 @@ public class Graph {
 
     /**
      * Prints the given matrix with the given vertex names
-     *
      * @param matrix
      * @param vertex_names
      */
@@ -273,7 +315,6 @@ public class Graph {
 
     /**
      * Gets the String that represents the value at the given row & col of the matrix
-     *
      * @param matrix the source matrix
      * @param row    of the value
      * @param col    of the value
@@ -285,48 +326,6 @@ public class Graph {
             return "\u221E";
         } else {
             return "" + value;
-        }
-    }
-
-    public static class Vertex {
-        // the edge that connects this vertex to its predecessor.
-        Edge edge;
-        // variable to hold visited if it has been visited or not
-        boolean visited;
-        // index from array
-        int index;
-
-        public Vertex(Edge in_connecting_to_this_vertex, boolean in_status, int in_index) {
-            visited = in_status;
-            edge = in_connecting_to_this_vertex;
-            index = in_index;
-        }
-    }
-
-    public static class Edge {
-        // weight of edge
-        int weight;
-        // The parent,essentially, : The vertex in which the edge comes from,
-        // the edge's vertex is the vertex the edge connects to
-        Vertex predecessor;
-        int index;
-
-        public Edge(int in_weight, Vertex in_pd) {
-            weight = in_weight;
-            predecessor = in_pd; // may not need.
-        }
-    }
-
-    public class Edge_Comparator implements Comparator<Edge> {
-        // used to compare weights of edges.
-        @Override
-        public int compare(Edge e1, Edge e2) {
-            if (e1.weight < e2.weight) {
-                return -1;
-            } else if (e1.weight > e2.weight) {
-                return 1;
-            }
-            return 0;
         }
     }
 }

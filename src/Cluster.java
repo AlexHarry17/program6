@@ -32,11 +32,11 @@ public class Cluster {
 	 * @param vert2
 	 * @return true if they are in the same cluster, false otherwise
 	 */
-	public boolean isSameCluster(String vert1, String vert2) {
+	public boolean isSameCluster(Vertex vert1, Vertex vert2) {
 		// cluster index of vert 1
-		int tmpCluster1 = getCluster(vert1);
+		int tmpCluster1 = getCluster(vert1.name);
 		// cluster index of vert 2
-		int tmpCluster2 = getCluster(vert2);
+		int tmpCluster2 = getCluster(vert2.name);
 		
 		// check that they are both in the cluster list
 		if (tmpCluster1 != -1 && tmpCluster2 != -1) {
@@ -53,11 +53,11 @@ public class Cluster {
 	 * @param vert1
 	 * @param vert2
 	 */
-	public void mergeClusters(String vert1, String vert2) {
+	public void mergeClusters(Vertex vert1, Vertex vert2) {
 		// cluster index of vert 1
-		int tmpCluster1 = getCluster(vert1);
+		int tmpCluster1 = getCluster(vert1.name);
 		// cluster index of vert 2
-		int tmpCluster2 = getCluster(vert2);
+		int tmpCluster2 = getCluster(vert2.name);
 		
 		for (int i=0; i<clusterList.get(tmpCluster1).size(); i++) {
 			// add the ith value of cluster 1 to cluster 2
